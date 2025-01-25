@@ -1,16 +1,13 @@
 const { Router } = require("express");
 const router = Router();
+const controller = require("../controllers/categoryController");
 
-router.get("/", (req, res) => {
-  res.send("Category page");
-});
+router.get("/", controller.getAll);
 
 router.get("/new", (req, res) => {
-  res.send("Category form");
+  res.render("./categoryForm");
 });
 
-router.post("/new", (req, res) => {
-  res.send("Post new category");
-});
+router.post("/new", controller.setCategory);
 
 module.exports = router;

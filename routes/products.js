@@ -1,16 +1,13 @@
 const { Router } = require("express");
 const router = Router();
+const controller = require("../controllers/productsController");
 
-router.get("/", (req, res) => {
-  res.send("Products page");
-});
+router.get("/", controller.getAll);
 
 router.get("/new", (req, res) => {
   res.send("Product form");
 });
 
-router.post("/new", (req, res) => {
-  res.send("Post new product");
-});
+router.post("/new", controller.setProduct);
 
 module.exports = router;
