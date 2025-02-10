@@ -1,18 +1,22 @@
-const queries = require("../db/queries");
 const pool = require("../db/pool");
-const { response } = require("express");
-
+const {
+  deleteCategory,
+  getAllCategories,
+  createCategory,
+  getCategoryById,
+  updateCategory,
+} = require("../db/queries");
 module.exports = {
   getAll: async (req, res) => {
-    const query = "SELECT * FROM categories;";
     try {
-      const { rows } = await pool.query(query);
+      const rows = await getAllCategories();
 
       if (!rows) {
         res.status(404).send("Categories not found");
       }
+
       console.log(rows);
-      res.render("../views/home", { data: rows });
+      res.render("../views/productForm", { categories: rows });
     } catch (err) {
       console.log(err);
       res.status(500).send("Internal server error");
@@ -21,10 +25,8 @@ module.exports = {
 
   setCategory: async (req, res) => {
     const { name } = req.body;
-    const query = "INSERT INTO categories (name) VALUES ($1);";
-
     try {
-      await pool.query(query, [name]);
+      await createCategory(name);
 
       res.redirect("/");
     } catch (err) {
@@ -33,16 +35,43 @@ module.exports = {
     }
   },
 
-  deleteCategory: async (req, res) => {
+  renderEdit: async (req, res, next) => {
     const { id } = req.params;
-    const query = "DELETE FROM categories WHERE id = $1;";
-    try {
-      await pool.query(query, [id]);
 
-      res.send("Category deleted");
+    try {
+      const category = await getCategoryById(id);
+
+      res.render("../views/categoryEdit", { category: category[0] });
     } catch (err) {
       console.log(err);
-      res.status(500).send("internal server error");
+      next(err);
+    }
+  },
+
+  editCategory: async (req, res, next) => {
+    const { name } = req.body;
+    const { id } = req.params;
+
+    try {
+      await updateCategory(name, id);
+
+      res.redirect("/");
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  },
+
+  deleteCategory: async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      await deleteCategory(id);
+
+      res.redirect("/");
+    } catch (err) {
+      next(err);
+      console.log(err);
+      // res.status(500).send("internal server error");
     }
   },
 };

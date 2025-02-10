@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit product</title>
+  </head>
+  <body>
+    <form action="/products/edit/<%=product.id %>" method="post">
+      <label for="name">Name</label>
+      <input type="text" name="name" id="name" value="<%= product.name %>" />
+      <label for="price">Price</label>
+      <input
+        type="number"
+        name="price"
+        id="price"
+        value="<%= product.price %>"
+      />
+      <% console.log(product) %>
+      <span>Current category: <%= product.category_name %></span>
+      <label for="category">Category</label>
+      <select name="categoryId" id="category">
+        <option value="">None</option>
+        <% categories.forEach(category => { %>
+        <option value="<%= category.id %>"><%= category.name %></option>
+        <% }) %>
+      </select>
+      <button type="submit">Add product</button>
+    </form>
+  </body>
+</html>

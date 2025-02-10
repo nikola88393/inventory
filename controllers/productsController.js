@@ -4,18 +4,20 @@ const {
   getProductById,
   createProduct,
   deleteProduct,
+  getAllCategories,
+  editProduct,
 } = require("../db/queries");
 
 module.exports = {
   getAll: async (req, res) => {
     try {
       const products = await getAllProducts();
+      const categories = await getAllCategories();
 
-      if (!products) {
-        res.status(404).send("No products found");
-      }
-
-      res.json(products);
+      res.render("../views/home", {
+        products: products,
+        categories: categories,
+      });
     } catch (err) {
       console.log(err);
       res.status(500).send("Internal server error");
@@ -28,10 +30,6 @@ module.exports = {
     try {
       const product = await getProductById(productId);
 
-      if (!product) {
-        res.status(404).send("No product found");
-      }
-
       res.json(product);
     } catch (err) {
       console.log(err);
@@ -40,27 +38,52 @@ module.exports = {
   },
 
   getProductCategory: async (req, res) => {
-    const { categoryId } = req.params;
+    const { filter } = req.body;
 
     try {
-      const product = await getProductByCategory(categoryId);
+      if (filter == "null") {
+        const products = await getAllProducts();
+        const categories = await getAllCategories();
 
-      if (!product) {
-        res.status(404).send("No product found");
+        res.render("../views/home", {
+          products: products,
+          categories: categories,
+        });
+      } else {
+        const products = await getProductByCategory(filter);
+        const categories = await getAllCategories();
+
+        res.render("../views/home", {
+          products: products,
+          categories: categories,
+        });
       }
-
-      res.json(product);
     } catch (err) {
       console.log(err);
       res.status(500).send("Internal server error");
     }
   },
-
-  setProduct: async (req, res) => {
-    const { name, price } = req.body;
+  renderEdit: async (req, res, next) => {
+    const { productId } = req.params;
 
     try {
-      await createProduct(name, price);
+      const product = await getProductById(productId);
+      const categories = await getAllCategories();
+      console.log(product, categories);
+
+      res.render("../views/productEditView", {
+        product: product[0],
+        categories,
+      });
+    } catch (err) {
+      next(err);
+    }
+  },
+  setProduct: async (req, res) => {
+    const { name, price, categoryId } = req.body;
+
+    try {
+      await createProduct(name, price, categoryId);
 
       res.redirect("/");
     } catch (err) {
@@ -69,13 +92,29 @@ module.exports = {
     }
   },
 
-  deleteProduct: async (req, res) => {
-    const { id } = req.params;
+  editProduct: async (req, res, next) => {
+    const { name, price, categoryId } = req.body;
+    const { productId } = req.params;
+
+    console.log(name, price, categoryId, productId);
 
     try {
-      await deleteProduct(id);
+      await editProduct(name, price, categoryId, productId);
 
-      res.send("Product deleted");
+      res.redirect("/");
+    } catch (err) {
+      console.log(err);
+      next(err);
+    }
+  },
+
+  deleteProduct: async (req, res) => {
+    const { productId } = req.params;
+
+    try {
+      await deleteProduct(productId);
+
+      res.redirect("/");
     } catch (err) {
       console.log(err);
       res.status(500).send("Internal server error");
