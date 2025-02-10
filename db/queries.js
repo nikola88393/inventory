@@ -46,7 +46,7 @@ JOIN categories ON products.category_id = categories.id WHERE categories.id = $1
 };
 
 const createProduct = async (name, price, categoryId) => {
-  if (typeof categoryId === "string") {
+  if (categoryId === "None") {
     console.log("execute 1");
     const query = "INSERT INTO products(name, price) VALUES ($1, $2);";
     await pool.query(query, [name, price]);
