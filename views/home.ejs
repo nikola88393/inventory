@@ -3,64 +3,67 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../styles/main.css" />
     <title>Home</title>
   </head>
   <body>
-    <h1>Home</h1>
-    <a href="/categories/new">Dobavi kategoriq</a>
-    <a href="/products/new">Dobavi product</a>
-
-    <p>Categories:</p>
-    <ul>
-      <% if (categories.length > 0) { %> <%
-      categories.forEach(function(category) { %>
-      <li>
-        <div>
-          <p><%= category.name %></p>
-          <a href="/categories/delete/<%= category.id %>">Delete</a>
-          <a href="/categories/edit/<%= category.id %>">Edit</a>
-        </div>
-      </li>
-      <% }) %> <% } else { %>
-      <p>No categories found</p>
-      <% } %>
-    </ul>
-
-    <form action="/" method="post">
-      <label for="filter">Filter</label>
-      <% if (categories.length > 0) { %>
-      <select name="filter" id="filter">
-        <option value="null">All</option>
-        <% categories.forEach(function(category) { %>
-        <option value="<%= category.id %>"><%= category.name %></option>
-        <% }) %>
-      </select>
-      <button type="submit">Filter</button>
-      <% } else { %>
-      <p>No categories found</p>
-      <% } %>
-    </form>
+    <%- include('./partials/header') %>
+    <div class="categories">
+      <p>Categories:</p>
+      <ul>
+        <% if (categories.length > 0) { %> <%
+        categories.forEach(function(category) { %>
+        <li>
+          <div>
+            <p><%= category.name %></p>
+            <a href="/categories/delete/<%= category.id %>">Delete</a>
+            <a href="/categories/edit/<%= category.id %>">Edit</a>
+          </div>
+        </li>
+        <% }) %> <% } else { %>
+        <p>No categories found</p>
+        <% } %>
+      </ul>
+    </div>
+    <div class="filter">
+      <form action="/" method="post">
+        <label for="filter">Filter</label>
+        <% if (categories.length > 0) { %>
+        <select name="filter" id="filter">
+          <option value="null">All</option>
+          <% categories.forEach(function(category) { %>
+          <option value="<%= category.id %>"><%= category.name %></option>
+          <% }) %>
+        </select>
+        <button type="submit">Filter</button>
+        <% } else { %>
+        <p>No categories found</p>
+        <% } %>
+      </form>
+    </div>
 
     <br />
-    <p>Products:</p>
-    <ul>
-      <% if (products && products.length > 0) { %> <%
-      products.forEach(function(product) { %>
-      <li>
-        <div>
-          <p>Name: <%= product.name %></p>
-          <p>Price: <%= product.price %> BGN</p>
-          <p>
-            Category: <%= product.category_name ? product.category_name :
-            'Unassigned' %>
-          </p>
-          <a href="/products/delete/<%= product.id %>">Delete</a>
-          <a href="/products/edit/<%= product.id %>">Edit</a>
-        </div>
-      </li>
-      <% }) %> <% } else { %>
-      <p>No products found</p>
-      <% } %>
-    </ul>
+    <div class="products">
+      <p>Products:</p>
+      <ul>
+        <% if (products && products.length > 0) { %> <%
+        products.forEach(function(product) { %>
+        <li>
+          <div>
+            <p>Name: <%= product.name %></p>
+            <p>Price: <%= product.price %> BGN</p>
+            <p>
+              Category: <%= product.category_name ? product.category_name :
+              'Unassigned' %>
+            </p>
+            <a href="/products/delete/<%= product.id %>">Delete</a>
+            <a href="/products/edit/<%= product.id %>">Edit</a>
+          </div>
+        </li>
+        <% }) %> <% } else { %>
+        <p>No products found</p>
+        <% } %>
+      </ul>
+    </div>
   </body>
 </html>
